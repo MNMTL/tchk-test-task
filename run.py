@@ -11,7 +11,7 @@ def check_capacity(max_capacity: int, guests: list) -> bool:
         if (check_out - check_in).days == 0:
             date_dict[guest['check-in']] = 1
         else:
-            for d in [check_in + timedelta(n) for n in range((check_out - check_in).days)]:
+            for d in (check_in + timedelta(n) for n in range((check_out - check_in).days)):
                 delta = d.strftime('%Y-%m-%d')
                 if delta in date_dict:
                     date_dict[delta] += 1
