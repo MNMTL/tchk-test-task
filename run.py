@@ -8,15 +8,18 @@ def check_capacity(max_capacity: int, guests: list) -> bool:
     for guest in guests:
         check_in = dt.strptime(guest['check-in'], '%Y-%m-%d')
         check_out = dt.strptime(guest['check-out'], '%Y-%m-%d')
-        if (check_out - check_in).days == 0:
-            date_dict[guest['check-in']] = 1
+        days = (check_out - check_in).days
+        if days < 0:
+            raise ValueError(f'Некорректные даты: {guest}')
+
+        elif days in [0, 1]:
+            date_dict[guest['check-in']] = date_dict.get(guest['check-in'], 0) + 1
+
         else:
-            for d in (check_in + timedelta(n) for n in range((check_out - check_in).days)):
+            for d in (check_in + timedelta(n) for n in range(int(days))):
                 delta = d.strftime('%Y-%m-%d')
-                if delta in date_dict:
-                    date_dict[delta] += 1
-                else:
-                    date_dict[delta] = 1
+                date_dict[delta] = date_dict.get(delta, 0) + 1
+
     if max_capacity >= max(date_dict.values()):
         return True
     else:
